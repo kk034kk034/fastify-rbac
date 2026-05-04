@@ -11,7 +11,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
-    "test": "node --test",
+    "test": "node --test test",
     "build:env": "node scripts/build_env_rd_web.js",
     "start": "npm run build:env && node server.js",
     "dev": "npm run build:env && node server.js"

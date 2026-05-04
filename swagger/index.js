@@ -1,6 +1,7 @@
 // swagger/index.js
 import path from 'node:path'
 import fs from 'node:fs'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 
 const swagger = {}
 
@@ -14,7 +15,7 @@ const loadSchemas = async (dir) => {
       if (fs.statSync(fullPath).isDirectory()) {
         await loadSchemas(fullPath) // ✅ 遞迴讀取子資料夾
       } else if (file.endsWith('.js')) {
-        const schemaModule = await import(fullPath)
+        const schemaModule = await import(pathToFileURL(fullPath).href)
         Object.assign(swagger, schemaModule)
       }
     })
@@ -23,7 +24,7 @@ const loadSchemas = async (dir) => {
 
 // ✅ 提供 `initSwagger()` 來手動初始化
 export const initSwagger = async () => {
-  await loadSchemas(new URL('.', import.meta.url).pathname)
+  await loadSchemas(path.dirname(fileURLToPath(import.meta.url)))
 }
 
 export default swagger

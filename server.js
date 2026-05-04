@@ -13,7 +13,10 @@ import { cleanSwaggerTrailingSlash } from './utils/others.js'
 
 dotenv.config()
 
-const fastify = Fastify({ logger: true })
+const fastify = Fastify({
+  logger: true,
+  pluginTimeout: 60000
+})
 
 // Check if database migration should be executed
 const shouldMigrate = process.env.DB_MIGRATE === 'true'
