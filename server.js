@@ -35,7 +35,8 @@ const migrateDatabase = async () => {
 
 // Automatically load all plugins in `plugins/` directory
 fastify.register(AutoLoad, {
-  dir: path.join(import.meta.dirname, 'plugins')
+  dir: path.join(import.meta.dirname, 'plugins'),
+  ignorePattern: /mqtt/
 })
 
 const start = async () => {

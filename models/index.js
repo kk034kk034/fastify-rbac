@@ -16,6 +16,11 @@ import License from './license.js'
 import DeviceLicense from './device_license.js'
 import Pack from './pack.js'
 import PackFeature from './pack_feature.js'
+import Camera from './camera.js'
+import CameraGroup from './camera_group.js'
+import StreamToken from './stream_token.js'
+import AccessLog from './access_log.js'
+import AlertThreshold from './alert_threshold.js'
 
 // UserRole 和 User / Role / Organization 的關聯
 User.hasMany(UserRole, { foreignKey: 'user_id' })
@@ -111,6 +116,44 @@ Pack.hasMany(PackFeature, {
 })
 PackFeature.belongsTo(Pack, { foreignKey: 'pack_id' })
 
+// ── 串流相關 ──────────────────────────────────────────────
+
+// CameraGroup 與 Organization
+Organization.hasMany(CameraGroup, { foreignKey: 'organization_id', onDelete: 'CASCADE' })
+CameraGroup.belongsTo(Organization, { foreignKey: 'organization_id' })
+
+// Camera 與 CameraGroup
+CameraGroup.hasMany(Camera, { foreignKey: 'camera_group_id', onDelete: 'SET NULL' })
+Camera.belongsTo(CameraGroup, { foreignKey: 'camera_group_id' })
+
+// Camera 與 Organization
+Organization.hasMany(Camera, { foreignKey: 'organization_id', onDelete: 'CASCADE' })
+Camera.belongsTo(Organization, { foreignKey: 'organization_id' })
+
+// StreamToken 與 Camera
+Camera.hasMany(StreamToken, { foreignKey: 'camera_id', onDelete: 'CASCADE' })
+StreamToken.belongsTo(Camera, { foreignKey: 'camera_id' })
+
+// StreamToken 與 User
+User.hasMany(StreamToken, { foreignKey: 'user_id' })
+StreamToken.belongsTo(User, { foreignKey: 'user_id' })
+
+// AccessLog 與 User
+User.hasMany(AccessLog, { foreignKey: 'user_id' })
+AccessLog.belongsTo(User, { foreignKey: 'user_id' })
+
+// AccessLog 與 Camera
+Camera.hasMany(AccessLog, { foreignKey: 'camera_id' })
+AccessLog.belongsTo(Camera, { foreignKey: 'camera_id' })
+
+// AccessLog 與 CameraGroup
+CameraGroup.hasMany(AccessLog, { foreignKey: 'camera_group_id' })
+AccessLog.belongsTo(CameraGroup, { foreignKey: 'camera_group_id' })
+
+// AccessLog 與 StreamToken
+StreamToken.hasMany(AccessLog, { foreignKey: 'token_id' })
+AccessLog.belongsTo(StreamToken, { foreignKey: 'token_id' })
+
 export {
   User,
   UserRole,
@@ -128,5 +171,10 @@ export {
   License,
   DeviceLicense,
   Pack,
-  PackFeature
+  PackFeature,
+  Camera,
+  CameraGroup,
+  StreamToken,
+  AccessLog,
+  AlertThreshold
 }

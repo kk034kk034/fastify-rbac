@@ -30,12 +30,15 @@ const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
 
 async function dbConnector(fastify) {
   try {
+    console.log('🔄 Connecting to MySQL...')
     await ensureDatabaseExists()
     await sequelize.authenticate()
     console.log('✅ MySQL connection successful')
 
+    console.log('🔄 Loading models...')
     await import('../models/index.js') // Load all models here
 
+    console.log('🔄 Syncing tables...')
     await sequelize.sync({ alter: false }) // Prevent Sequelize from attempting to modify table structure
     console.log('✅ Table synchronization complete')
 

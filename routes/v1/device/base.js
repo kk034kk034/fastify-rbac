@@ -6,7 +6,7 @@
  * delete device ----------------------> groupAdmin, groupManager
  * Get all devices under the user -----> groupAdmin, groupManager, groupViewer
  */
-import { User, UserRole, Role, MqttLog, DeviceCatalog, DeviceBind } from '../../../models/index.js'
+import { User, UserRole, Role, DeviceCatalog, DeviceBind } from '../../../models/index.js'
 import swagger from '../../../swagger/index.js'
 import crypto from 'node:crypto'
 import { getOrgOrSiteId } from '../../../utils/permissions.js'
@@ -163,23 +163,6 @@ export default async function (fastify) {
           name: deviceName
         })
 
-        // 記錄新增動作到 `MqttLog`
-        MqttLog.create({
-          user_id: user_id,
-          client_id: client_id,
-          status: 'config_bind',
-          description: JSON.stringify(newDevice.toJSON())
-        })
-
-        const foundUser = await User.findOne({ where: { id: user_id } })
-        const payloadToSend = {
-          cmd: 'config_bind',
-          client_id: client_id,
-          username: foundUser.username,
-          email: foundUser.email
-        }
-        fastify.mqtt.publish(`/${deviceID}/control`, payloadToSend)
-
         return reply.send({
           message: 'Device added successfully',
           device: newDevice
@@ -263,22 +246,6 @@ export default async function (fastify) {
         if (!deviceRecord) {
           return reply.code(404).send({ error: 'Device not found' })
         }
-        const clientId = deviceRecord.client_id
-
-        // Log deletion actions to `MqttLog`.
-        MqttLog.create({
-          user_id: user.id,
-          client_id: clientId,
-          status: 'config_unbind',
-          description: JSON.stringify(deviceRecord.toJSON())
-        })
-
-        // Send MQTT unbind command
-        const payloadToSend = {
-          cmd: 'config_unbind'
-        }
-        fastify.mqtt.publish(`/${clientId}/control`, payloadToSend)
-
         // TODO: 需要集中到一個 function, 可能還有其他資料要一併刪除
         deviceRecord.destroy()
 

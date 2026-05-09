@@ -14,6 +14,11 @@ ac.grant('groupViewer')
   .readAny('organization')
   .readAny('userRole')
   .readAny('roleChangeLog')
+  .readAny('camera')
+  .readAny('cameraGroup')
+  .readAny('streamToken')
+  .readAny('report')
+  .readAny('monitor')
 
 // Group Manager
 ac.grant('groupManager')
@@ -29,9 +34,22 @@ ac.grant('groupManager')
   .createAny('device')
   .updateAny('device')
   .deleteAny('device')
+  .createAny('camera')
+  .updateAny('camera')
+  .deleteAny('camera')
+  .createAny('cameraGroup')
+  .updateAny('cameraGroup')
+  .deleteAny('cameraGroup')
+  .createAny('streamToken')
+  .updateAny('streamToken')
+  .deleteAny('streamToken')
 
 // Account Admin
-ac.grant('groupAdmin').extend('groupManager').createAny('organization').deleteAny('organization')
+ac.grant('groupAdmin')
+  .extend('groupManager')
+  .createAny('organization')
+  .deleteAny('organization')
+  .updateAny('alertThreshold')
 
 async function rbacPlugin(fastify) {
   fastify.decorate('authorize', (action, resource, getOrgSiteId = null) => {

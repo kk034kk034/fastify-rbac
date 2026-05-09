@@ -46,6 +46,20 @@ services:
     networks:
       - internal_network
 
+  srs:
+    image: ossrs/srs:5
+    container_name: srs
+    restart: always
+    ports:
+      - '1935:1935'   # RTMP
+      - '8935:8080'   # HLS / M-JPEG (host 8080 已被 Traefik 佔用，改對映 8935)
+      - '1985:1985'   # HTTP API（監控用）
+    volumes:
+      - ./srs/srs.conf:/usr/local/srs/conf/srs.conf
+    command: ./objs/srs -c conf/srs.conf
+    networks:
+      - internal_network
+
   redis:
     image: redis:7
     container_name: redis
